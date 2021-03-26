@@ -16,7 +16,7 @@ class CourierView(BaseView):
         response = await self.request.json()
         courier_id = int(self.request.match_info['courier_id'])
 
-        async with async_session() as async_sess:
+        async with async_session() as session:
             is_error = False
 
             for field in response:
@@ -27,15 +27,15 @@ class CourierView(BaseView):
                 upd_stm = update(Courier).where(
                     Courier.id == courier_id).values(**response)
 
-                await async_sess.execute(upd_stm)
+                await session.execute(upd_stm)
 
-                await async_sess.commit()
+                await session.commit()
 
                 sel_stm = select(Courier.id, Courier.type, Courier.regions,
                                  Courier.working_hours).where(
                     Courier.id == courier_id)
 
-                result = await async_sess.execute(sel_stm)
+                result = await session.execute(sel_stm)
                 user = result.first()
                 modified_user = json.dumps({
                     "courier_id": user.id,
@@ -47,6 +47,6 @@ class CourierView(BaseView):
                 return web.Response(body=modified_user, status=200)
 
             else:
-                await async_sess.rollback()
+                await session.rollback()
                 return web.Response(status=400, text='Bad Request: invalid '
                                                      'field')

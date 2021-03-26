@@ -17,30 +17,33 @@ class CouriersView(BaseView):
         courier_list = response['data']
 
         is_invalid_data = False
+
         wrong_ids = []
         success_ids = []
 
         async with async_session() as session:
 
-            for c in courier_list:
-                all_fields_exists = containing_check(
-                    CouriersView.required_fields, c)
+            courier_list: list[dict]
+            for courier in courier_list:
+
+                all_fields_exists = containing_check(CouriersView.required_fields,
+                                                     courier)
 
                 if not all_fields_exists:
                     is_invalid_data = True
-                    wrong_ids.append({"id": c["courier_id"]})
+                    wrong_ids.append({"id": courier["courier_id"]})
 
                 else:
-                    id = c["courier_id"]
-                    type = c["courier_type"]
-                    regions = c["regions"]
-                    working_hours = c["working_hours"]
+                    id = courier["courier_id"]
+                    type = courier["courier_type"]
+                    regions = courier["regions"]
+                    working_hours = courier["working_hours"]
 
                     instance = Courier(id=id, type=type, regions=regions,
                                        working_hours=working_hours,
                                        current_taken_weight=0)
 
-                    success_ids.append({"id": c["courier_id"]})
+                    success_ids.append({"id": courier["courier_id"]})
                     session.add(instance)
 
             if is_invalid_data:

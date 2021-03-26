@@ -2,6 +2,11 @@ import requests
 import asyncio
 import json
 
+import datetime
+
+from sqlalchemy import select, update
+from courier_service.db.schema import Courier, Order, async_session
+
 from courier_service.db.schema import Courier, async_session
 
 
@@ -15,7 +20,7 @@ def test_post_spread_api():
         },
         {
             "courier_id": 2,
-
+            "courier_type": "bike",
             "regions": [22],
             "working_hours": ["09:00-18:00"]
         },
@@ -32,20 +37,10 @@ def test_post_spread_api():
     print(r.text)
 
 
-async def sql_test():
-    # id = Column(Integer, primary_key=True)
-    # type = Column(String, nullable=False)
-    # regions = Column(ARRAY(Integer), nullable=False)
-    # working_hours = Column(ARRAY(String), nullable=False)
-    # current_taken_weight = Column(Float, nullable=False, default=0)
-    async with async_session.begin() as session:
-        c = Courier(id=3, type="car", regions=[12],
-                    working_hours=["18:00-19:00"], current_taken_weight=1)
-        session.add(c)
 
 
 def test_patch_req():
-    data = {'working_hours_bitches!': ["14:00-15:30"]}
+    data = {'working_hours': ["14:00-15:30"]}
     r = requests.patch("http://localhost:8080/couriers/3", json=data)
     print(r)
     print(r.status_code)
@@ -81,12 +76,31 @@ def test_post_req_order():
 
 
 def test_post_order_assign():
-    data = {"courier_id": 1234}
+    data = {"courier_id": 1}
     r = requests.post("http://localhost:8080/orders/assign", json=data)
     print(r)
     print(r.status_code)
     print(r.text)
 
 
+async def test_sess():
+    async with async_session() as session:
+        courier_id = 2
+        courier_select = select(Courier.id, Courier.type,
+                                Courier.regions,
+                                Courier.working_hours,
+                                Courier.current_taken_weight).where(
+            Courier.id == int(courier_id))
+
+        courier = await session.execute(courier_select)
+        courier = courier.first()
+
+        print(courier.type)
+
+
 if __name__ == '__main__':
     test_post_order_assign()
+    #test_post_order_assign()
+
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(test_sess())

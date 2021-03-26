@@ -35,8 +35,8 @@ class Order(Base):
     delivery_hours = Column(ARRAY(String), nullable=False)
 
     taken = Column(Boolean, nullable=False, default=False)
-    assign_time = Column(DateTime, nullable=True)
-    complete_time = Column(DateTime, nullable=True)
+    assign_time = Column(String, nullable=True)
+    complete_time = Column(String, nullable=True)
     performing_courier = Column(Integer, ForeignKey('Courier.id'),
                                 nullable=True)
 

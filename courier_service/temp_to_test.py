@@ -1,16 +1,17 @@
 import requests
+from pprint import pprint
 import asyncio
 import json
 
 import datetime
 
 from sqlalchemy import select, update
-from courier_service.db.schema import Courier, Order, async_session
+from courier_service.db.schema import Courier, Order, async_session, engine, Base
 
 from courier_service.db.schema import Courier, async_session
 
 
-def test_post_spread_api():
+def test_import_couriers():
     data = {"data": [
         {
             "courier_id": 1,
@@ -37,17 +38,16 @@ def test_post_spread_api():
     print(r.text)
 
 
-
-
 def test_patch_req():
     data = {'working_hours': ["14:00-15:30"]}
     r = requests.patch("http://localhost:8080/couriers/3", json=data)
     print(r)
     print(r.status_code)
     print(r.text)
+    print(r.content)
 
 
-def test_post_req_order():
+def test_import_orders():
     data = {
         "data": [
             {
@@ -73,14 +73,16 @@ def test_post_req_order():
     print(r)
     print(r.status_code)
     print(r.text)
+    print(r.content)
 
 
-def test_post_order_assign():
+def test_orders_assign():
     data = {"courier_id": 1}
     r = requests.post("http://localhost:8080/orders/assign", json=data)
     print(r)
-    print(r.status_code)
     print(r.text)
+    print(r.ok)
+    pprint(json.loads(r.text))
 
 
 async def test_sess():
@@ -90,7 +92,7 @@ async def test_sess():
                                 Courier.regions,
                                 Courier.working_hours,
                                 Courier.current_taken_weight).where(
-            Courier.id == int(courier_id))
+                Courier.id == int(courier_id))
 
         courier = await session.execute(courier_select)
         courier = courier.first()
@@ -98,9 +100,28 @@ async def test_sess():
         print(courier.type)
 
 
+def reupdate_database():
+    test_import_couriers()
+    test_import_orders()
+
+
+async def test_alchemy_features():
+    async with async_session() as session:
+        upd_stm = update(Order).where(Order.id == 2).values(weight=15)
+        await session.execute(upd_stm)
+
+        await session.commit()
+    print('pizda')
+
+
 if __name__ == '__main__':
-    test_post_order_assign()
-    #test_post_order_assign()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(test_alchemy_features())
+    # bitch()
+    # reupdate_database()
+    # test_orders_assign()
+
+    # test_post_order_assign()
 
     # loop = asyncio.get_event_loop()
     # loop.run_until_complete(test_sess())

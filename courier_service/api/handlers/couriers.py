@@ -1,58 +1,60 @@
 import json
 
+from aiohttp import web
+
 from courier_service.db.schema import Courier, async_session
 from courier_service.api.handlers.base import BaseView
-from courier_service.api.handlers.utils import containing_check
-
-from aiohttp import web
+from courier_service.api.handlers.utils import validate_fields
 
 
 class CouriersView(BaseView):
+    """Import couriers"""
     URL_PATH = '/couriers'
     required_fields = (
         'courier_id', 'courier_type', 'regions', 'working_hours')
 
     async def post(self):
         response = await self.request.json()
-        courier_list = response['data']
+        couriers_list = response['data']
+        couriers_list: list[dict]
 
-        is_invalid_data = False
+        invalid_data_in_post = False
 
         wrong_ids = []
         success_ids = []
 
         async with async_session() as session:
 
-            courier_list: list[dict]
-            for courier in courier_list:
+            for courier in couriers_list:
+                given_fields_correct = validate_fields(CouriersView.required_fields,
+                                                       courier)
 
-                all_fields_exists = containing_check(CouriersView.required_fields,
-                                                     courier)
-
-                if not all_fields_exists:
-                    is_invalid_data = True
+                if not given_fields_correct:
+                    invalid_data_in_post = True
                     wrong_ids.append({"id": courier["courier_id"]})
 
                 else:
-                    id = courier["courier_id"]
-                    type = courier["courier_type"]
+                    courier_id = courier["courier_id"]
+                    courier_type = courier["courier_type"]
                     regions = courier["regions"]
                     working_hours = courier["working_hours"]
 
-                    instance = Courier(id=id, type=type, regions=regions,
+                    instance = Courier(id=courier_id, type=courier_type, regions=regions,
                                        working_hours=working_hours,
                                        current_taken_weight=0)
 
                     success_ids.append({"id": courier["courier_id"]})
                     session.add(instance)
 
-            if is_invalid_data:
+            if invalid_data_in_post:
                 await session.rollback()
-                body = json.dumps({'validation_error': {
-                    'couriers': wrong_ids
-                }})
-                return web.Response(body=body, status=400)
+                body = {'description': 'Bad request',
+                        'content': {'validation_error': {'couriers': wrong_ids}}
+                        }
+                return web.json_response(data=body, status=400)
             else:
                 await session.commit()
-                body = json.dumps({'couriers': success_ids})
-                return web.Response(body=body, status=201)
+                body = {'description': 'created',
+                        'content': {'couriers': success_ids}
+                        }
+                return web.json_response(data=body, status=201)

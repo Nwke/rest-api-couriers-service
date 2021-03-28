@@ -1,6 +1,6 @@
 from .couriers import CouriersView
 from .courier import CourierView
-from .order import OrderView
-from .order_assign import OrderAssignView
+from .orders import OrdersView
+from .orders_assign import OrdersAssignView
 
-HANDLERS = (CouriersView, CourierView, OrderView, OrderAssignView)
+HANDLERS = (CouriersView, CourierView, OrdersView, OrdersAssignView)

@@ -6,7 +6,7 @@ import json
 import datetime
 
 from sqlalchemy import select, update
-from courier_service.db.schema import Courier, Order, async_session, engine, Base
+from courier_service.db.schema import Courier, Order, async_session, engine, Base, main
 
 from courier_service.db.schema import Courier, async_session
 
@@ -35,7 +35,7 @@ def test_import_couriers():
     r = requests.post("http://localhost:8080/couriers", json=data)
     print(r)
     print(r.status_code)
-    print(r.text)
+    print(r.json())
 
 
 def test_patch_req():
@@ -114,10 +114,34 @@ async def test_alchemy_features():
     print('pizda')
 
 
+async def test_sql_feature2():
+    async with async_session() as session:
+        sel_stm = select(Order).where(Order.id == 2)
+        res = await session.execute(sel_stm)
+        r = res.first()
+        print('ARR', r)
+        if r:
+            print('HAH')
+
+        await session.commit()
+    print('pizda')
+
+
+def test_order_complete():
+    data = {"courier_id": 1}
+    r = requests.post("http://localhost:8080/orders/complete", json=data)
+    print(r)
+    print(r.text)
+    print(r.ok)
+
+
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(test_alchemy_features())
-    # bitch()
+    test_import_couriers()
+
+    # test_order_complete()
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(main())
+
     # reupdate_database()
     # test_orders_assign()
 

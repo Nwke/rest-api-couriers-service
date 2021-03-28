@@ -22,8 +22,7 @@ class OrdersAssignView(BaseView):
         data_in_post = response
 
         async with async_session() as session:
-            all_fields_valid = validate_fields(OrdersAssignView.required_fields,
-                                               data_in_post)
+            all_fields_valid = validate_fields(self.required_fields, data_in_post)
 
             if not all_fields_valid:
                 body = {'description': 'Bad request'}
@@ -41,8 +40,8 @@ class OrdersAssignView(BaseView):
             not_taken_orders_select = select(Order.id, Order.weight,
                                              Order.region,
                                              Order.delivery_hours).where(
-                Order.taken == False and Order.complete_time is None).order_by(
-                Order.weight)
+                    Order.taken == False and Order.complete_time is None).order_by(
+                    Order.weight)
 
             result = await session.execute(not_taken_orders_select)
             not_taken_orders_list = result.all()
@@ -52,7 +51,7 @@ class OrdersAssignView(BaseView):
                                     Courier.regions,
                                     Courier.working_hours,
                                     Courier.current_taken_weight).where(
-                Courier.id == int(courier_id))
+                    Courier.id == int(courier_id))
 
             result = await session.execute(courier_select)
             courier = result.first()
@@ -72,22 +71,23 @@ class OrdersAssignView(BaseView):
                     current_taken_weight += float(order.weight)
 
                     upd_stm = update(Order).where(Order.id == int(order.id)).values(
-                        taken=True,
-                        assign_time=iso_time,
-                        performing_courier=int(courier.id))
+                            taken=True,
+                            assign_time=iso_time,
+                            performing_courier=int(courier.id))
 
                     await session.execute(upd_stm)
 
             upd_stm = update(Courier).where(Courier.id == int(courier.id)).values(
-                current_taken_weight=current_taken_weight)
+                    current_taken_weight=current_taken_weight)
 
             await session.execute(upd_stm)
 
             await session.commit()
 
         issued_orders_select = select(Order.id, Order.assign_time).where(
-            Order.taken == True and Order.performing_courier == int(courier_id)).order_by(
-            Order.id)
+                Order.taken == True and Order.performing_courier == int(
+                    courier_id)).order_by(
+                Order.id)
 
         result = await session.execute(issued_orders_select)
         issued_orders = result.all()

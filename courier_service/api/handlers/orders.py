@@ -1,5 +1,3 @@
-import json
-
 from aiohttp import web
 
 from courier_service.db.schema import Order, async_session
@@ -10,8 +8,7 @@ from courier_service.api.handlers.utils import validate_fields
 class OrdersView(BaseView):
     """Import orders"""
     URL_PATH = '/orders'
-    required_fields = (
-        'order_id', 'weight', 'region', 'delivery_hours')
+    required_fields = ('order_id', 'weight', 'region', 'delivery_hours')
 
     async def post(self):
         response = await self.request.json()
@@ -26,7 +23,7 @@ class OrdersView(BaseView):
         async with async_session() as session:
 
             for order in orders_list:
-                given_fields_correct = validate_fields(OrdersView.required_fields, order)
+                given_fields_correct = validate_fields(self.required_fields, order)
 
                 if not given_fields_correct:
                     invalid_data_in_post = True

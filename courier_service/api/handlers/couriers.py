@@ -10,8 +10,7 @@ from courier_service.api.handlers.utils import validate_fields
 class CouriersView(BaseView):
     """Import couriers"""
     URL_PATH = '/couriers'
-    required_fields = (
-        'courier_id', 'courier_type', 'regions', 'working_hours')
+    required_fields = ('courier_id', 'courier_type', 'regions', 'working_hours')
 
     async def post(self):
         response = await self.request.json()
@@ -26,8 +25,7 @@ class CouriersView(BaseView):
         async with async_session() as session:
 
             for courier in couriers_list:
-                given_fields_correct = validate_fields(CouriersView.required_fields,
-                                                       courier)
+                given_fields_correct = validate_fields(self.required_fields, courier)
 
                 if not given_fields_correct:
                     invalid_data_in_post = True

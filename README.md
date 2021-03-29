@@ -1,6 +1,6 @@
 # Couriers service
-Rest api service to manage delivery service via couriers and orders \
-Task description can be found here: https://disk.yandex.ru/d/TbWKTZbnOST80Q?w=1 
+Rest api service to manage the delivery service via couriers and orders \
+The task description can be found here: https://disk.yandex.ru/d/TbWKTZbnOST80Q?w=1 
 
 ---
 ## External dependencies description
@@ -51,10 +51,10 @@ You will enter a password twice
 
 After it you need to create a database
 with name yandex_backend_school \
-if you want another name for database
+if you want another name for the database
 you need to open courier_service/db/schema.py
-find there a "postgresql+asyncpg://postgres:root@localhost/yandex_backend_school"
-and replace yandex_backend_school to your database name
+find there the "postgresql+asyncpg://postgres:root@localhost/yandex_backend_school" line
+and replace "yandex_backend_school" to your database name
 
 You must do the same for the password (switch default root pass to your pass)
 
@@ -85,4 +85,9 @@ The final step is to up the server: \
 ```text 
 sudo python3 -m courier_serivce.api
 ```
+or (to make the server run as the background process
+```text
+sudo nohup python app1c.py
+```
 The server is on
+

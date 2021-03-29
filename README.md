@@ -1,6 +1,6 @@
 # Couriers service
 Rest api service to manage delivery service via couriers and orders
-
+Task description can be found here: https://disk.yandex.ru/d/TbWKTZbnOST80Q?w=1 
 ---
 ## External dependencies description
 1. [aiohttp](https://docs.aiohttp.org/en/stable/) - Asynchronous HTTP Client/Server for asyncio 
@@ -17,3 +17,70 @@ Rest api service to manage delivery service via couriers and orders
    
 ---
 ## Tests
+To run tests you need (it is supposed you are in root dir):
+```text
+cd tests
+pytest [optional: filename.py]
+```
+---
+
+## Getting started & Deploy
+1. connect to a server via ssh or another protocol
+2. follow the next commands 
+```text
+git clone https://github.com/Nwke/rest-api-couriers-service.git
+cd rest-api-couriers-service/
+
+sudo apt update
+sudo apt install python3-pip
+
+sudo pip3 install -r requirements.txt
+
+sudo apt install postgresql
+```
+then you need to setup password for postgres user
+for postgresql
+
+```text
+sudo -u postgres psql postgres
+\password postgres
+```
+You will enter a password twice
+
+After it you need to create a database
+with name yandex_backend_school \
+if you want another name for database
+you need to open courier_service/db/schema.py
+find there a "postgresql+asyncpg://postgres:root@localhost/yandex_backend_school"
+and replace yandex_backend_school to your database name
+
+You must do the same for the password (switch default root pass to your pass)
+
+to create the database
+```text
+sudo -u postgres psql postgres
+CREATE DATABASE yandex_backend_school;
+```
+You should see in console
+"CREATE DATABASE"
+
+```text
+# if you want to connect to the database
+\c yandex_backend_school
+```
+
+next step is to create tables
+get into the root dir
+```text
+cd courier_service/db
+sudo python3 schema.py
+```
+Now the tables should be created (structure
+of tables you can find in db/schema.py)
+
+The final step is to up the server: \
+(suppose you are in root dir)
+```text 
+sudo python3 -m courier_serivce.api
+```
+The server is on

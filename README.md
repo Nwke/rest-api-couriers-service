@@ -87,7 +87,7 @@ sudo python3 -m courier_serivce.api
 ```
 or (to make the server run as the background process)
 ```text
-sudo nohup python app1c.py
+sudo nohup python3 -m courier_serivce.api
 ```
 The server is on
 

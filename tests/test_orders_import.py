@@ -28,9 +28,9 @@ async def test_valid_post_data(rebuild_db_tables):
     print(r.status_code)
 
     assert r.status_code == 201
-    assert r.json() == {'description': 'Created',
-                        'content': {'orders': [{'id': 1}, {'id': 2}, {'id': 3}]}
-                        }
+    assert r.json() == {
+        'orders': [{'id': 1}, {'id': 2}, {'id': 3}]
+    }
 
 
 async def test_invalid_post_data(rebuild_db_tables):
@@ -54,11 +54,11 @@ async def test_invalid_post_data(rebuild_db_tables):
     print(r.status_code)
 
     assert r.status_code == 400
-    assert r.json() == {'description': 'Bad request',
-                        'content': {'validation_error': {
-                            'orders': [{'id': 3}]
-                        }}
-                        }
+    assert r.json() == {
+        'validation_error': {
+            'orders': [{'id': 3}]
+        }
+    }
 
 
 async def test_invalid_multiple_post_data(rebuild_db_tables):
@@ -82,11 +82,11 @@ async def test_invalid_multiple_post_data(rebuild_db_tables):
     print(r.status_code)
 
     assert r.status_code == 400
-    assert r.json() == {'description': 'Bad request',
-                        'content': {'validation_error': {
-                            'orders': [{'id': 2}, {'id': 3}]
-                        }}
-                        }
+    assert r.json() == {
+        'validation_error': {
+            'orders': [{'id': 2}, {'id': 3}]
+        }
+    }
 
 
 async def test_missing_field_in_post_data(rebuild_db_tables):
@@ -103,11 +103,11 @@ async def test_missing_field_in_post_data(rebuild_db_tables):
     print(r.status_code)
 
     assert r.status_code == 400
-    assert r.json() == {'description': 'Bad request',
-                        'content': {'validation_error': {
-                            'orders': [{'id': 3}]
-                        }}
-                        }
+    assert r.json() == {
+        'validation_error': {
+            'orders': [{'id': 3}]
+        }
+    }
 
 
 async def test_undeclared_field_in_post_data(rebuild_db_tables):
@@ -125,11 +125,11 @@ async def test_undeclared_field_in_post_data(rebuild_db_tables):
     print(r.status_code)
 
     assert r.status_code == 400
-    assert r.json() == {'description': 'Bad request',
-                        'content': {'validation_error': {
-                            'orders': [{'id': 3}]
-                        }}
-                        }
+    assert r.json() == {
+        'validation_error': {
+            'orders': [{'id': 3}]
+        }
+    }
 
 
 async def test_replaced_field_in_post_data(rebuild_db_tables):
@@ -146,11 +146,9 @@ async def test_replaced_field_in_post_data(rebuild_db_tables):
     print(r.status_code)
 
     assert r.status_code == 400
-    assert r.json() == {'description': 'Bad request',
-                        'content': {'validation_error': {
-                            'orders': [{'id': 3}]
-                        }}
-                        }
+    assert r.json() == {'validation_error': {
+        'orders': [{'id': 3}]
+    }}
 
 
 async def test_empty_post_data(rebuild_db_tables):
@@ -162,6 +160,4 @@ async def test_empty_post_data(rebuild_db_tables):
     print(r.status_code)
 
     assert r.status_code == 201
-    assert r.json() == {'description': 'Created',
-                        'content': {'orders': []}
-                        }
+    assert r.json() == {'orders': []}

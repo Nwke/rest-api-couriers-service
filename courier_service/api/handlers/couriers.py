@@ -46,13 +46,13 @@ class CouriersView(BaseView):
 
             if invalid_data_in_post:
                 await session.rollback()
-                body = {'description': 'Bad request',
-                        'content': {'validation_error': {'couriers': wrong_ids}}
-                        }
+                body = {
+                    'validation_error': {'couriers': wrong_ids}
+                }
                 return web.json_response(data=body, status=400)
             else:
                 await session.commit()
-                body = {'description': 'Created',
-                        'content': {'couriers': success_ids}
-                        }
+                body = {
+                    'couriers': success_ids
+                }
                 return web.json_response(data=body, status=201)

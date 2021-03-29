@@ -25,16 +25,14 @@ class OrdersAssignView(BaseView):
             all_fields_valid = validate_fields(self.required_fields, data_in_post)
 
             if not all_fields_valid:
-                body = {'description': 'Bad request'}
-                return web.json_response(data=body, status=400)
+                return web.json_response(status=400)
 
             # check if given courier id really exists
             courier_id = data_in_post['courier_id']
             courier_exists = await does_courier_exists(courier_id, session)
 
             if not courier_exists:
-                body = {'description': 'Bad request'}
-                return web.json_response(data=body, status=400)
+                return web.json_response(status=400)
 
             # if post data are correct
             not_taken_orders_select = select(Order.id, Order.weight,
@@ -86,7 +84,7 @@ class OrdersAssignView(BaseView):
 
         issued_orders_select = select(Order.id, Order.assign_time).where(
                 Order.taken == True and Order.performing_courier == int(
-                    courier_id)).order_by(
+                        courier_id)).order_by(
                 Order.id)
 
         result = await session.execute(issued_orders_select)
@@ -99,9 +97,7 @@ class OrdersAssignView(BaseView):
     @staticmethod
     def formulate_response_body(issued_orders):
         orders_ids = [{"id": order.id} for order in issued_orders]
-        body = {'description': 'OK',
-                'content': {'orders': orders_ids}
-                }
+        body = {'orders': orders_ids}
 
         # if not empty orders list
         if issued_orders:

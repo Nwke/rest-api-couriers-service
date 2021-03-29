@@ -10,10 +10,9 @@ def test_valid_data_in_patch(rebuild_db_tables, import_couriers, import_orders):
     print(r.status_code)
 
     # assert r.status_code == 200
-    assert r.json() == {'description': 'OK',
-                        'content': {
-                            "courier_id": 2,
-                            "courier_type": "bike",
-                            "regions": [22],
-                            "working_hours": ["09:00-18:00"]}
-                        }
+    assert r.json() == {
+        "courier_id": 2,
+        "courier_type": "bike",
+        "regions": [22],
+        "working_hours": ["09:00-18:00"]
+    }

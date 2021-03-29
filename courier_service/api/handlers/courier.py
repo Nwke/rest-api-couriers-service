@@ -23,17 +23,14 @@ class CourierView(BaseView):
 
             for field in fields_to_modify:
                 if field not in valid_fields:
-                    print('Fuck', field)
                     given_invalid_field = True
 
             if given_invalid_field:
-                body = {'description': 'Bad request'}
-                return web.json_response(data=body, status=400)
+                return web.json_response(status=400)
 
             courier_exists = await does_courier_exists(courier_id, session)
             if not courier_exists:
-                body = {'description': 'Not found'}
-                return web.json_response(data=body, status=404)
+                return web.json_response(status=404)
 
             courier_update_stm = update(Courier).where(
                     Courier.id == int(courier_id)).values(**fields_to_modify)
@@ -51,13 +48,11 @@ class CourierView(BaseView):
             await self.update_orders_due_to_courier_modification(courier, session)
 
             modified_courier = {
-                'description': 'OK',
-                'content': {
-                    "courier_id": courier.id,
-                    "courier_type": courier.type,
-                    "regions": courier.regions,
-                    "working_hours": courier.working_hours
-                }}
+                "courier_id": courier.id,
+                "courier_type": courier.type,
+                "regions": courier.regions,
+                "working_hours": courier.working_hours
+            }
 
             session.commit()
             return web.json_response(data=modified_courier, status=200)
@@ -95,8 +90,6 @@ class CourierView(BaseView):
                     performing_courier=None)
 
             await session.execute(upd_stm)
-
-        print(courier, 'SUKA')
 
         new_taken_weight = courier.current_taken_weight - released_weight
         courier_update_stm = update(Courier).where(

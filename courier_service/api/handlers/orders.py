@@ -45,13 +45,13 @@ class OrdersView(BaseView):
 
             if invalid_data_in_post:
                 await session.rollback()
-                body = {'description': 'Bad request',
-                        'content': {'validation_error': {'orders': wrong_ids}}
-                        }
+                body = {
+                    'validation_error': {'orders': wrong_ids}
+                }
                 return web.json_response(data=body, status=400)
             else:
                 await session.commit()
-                body = {'description': 'Created',
-                        'content': {'orders': success_ids}
-                        }
+                body = {
+                    'orders': success_ids
+                }
                 return web.json_response(data=body, status=201)

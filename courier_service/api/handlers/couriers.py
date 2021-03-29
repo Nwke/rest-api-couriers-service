@@ -1,4 +1,4 @@
-import json
+from typing import List
 
 from aiohttp import web
 
@@ -15,7 +15,7 @@ class CouriersView(BaseView):
     async def post(self):
         response = await self.request.json()
         couriers_list = response['data']
-        couriers_list: list[dict]
+        couriers_list: List[dict]
 
         invalid_data_in_post = False
 

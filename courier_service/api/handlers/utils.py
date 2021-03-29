@@ -1,8 +1,10 @@
+from typing import List, Dict, Tuple
+
 from sqlalchemy import select
 from courier_service.db.schema import Courier, Order
 
 
-def validate_fields(required_fields: tuple, data: dict):
+def validate_fields(required_fields: Tuple, data: Dict):
     """it checks if given fields are correct correspond required_fields"""
     given_fields = data.keys()
 
@@ -52,8 +54,8 @@ async def does_courier_exists(courier_id, session):
         return True
 
 
-def get_orders_suitable_by_region(courier: Courier, orders_list: list[Order]) -> \
-        list[Order]:
+def get_orders_suitable_by_region(courier: Courier, orders_list: List[Order]) -> \
+        List[Order]:
     """return orders whose region destination hit in region courier working in"""
 
     courier_suitable_regions = list(map(int, courier.regions))
@@ -67,8 +69,8 @@ def get_orders_suitable_by_region(courier: Courier, orders_list: list[Order]) ->
     return appropriate_orders
 
 
-def get_orders_suitable_by_time(courier: Courier, orders_list: list[Order]) -> \
-        list[Order]:
+def get_orders_suitable_by_time(courier: Courier, orders_list: List[Order]) -> \
+        List[Order]:
     """return orders that satisfy the courier working hours i.e desired delivery time
     hit in the courier working hours"""
 
@@ -88,7 +90,7 @@ def get_orders_suitable_by_time(courier: Courier, orders_list: list[Order]) -> \
 
 
 def get_appropriate_orders_by_time_and_regions(courier: Courier,
-                                               orders_list: list[Order]) -> list[
+                                               orders_list: List[Order]) -> List[
     Order]:
     orders_suitable_by_region = get_orders_suitable_by_region(courier,
                                                               orders_list)

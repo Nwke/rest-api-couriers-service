@@ -1,3 +1,5 @@
+from typing import List
+
 from aiohttp import web
 
 from courier_service.db.schema import Order, async_session
@@ -13,7 +15,7 @@ class OrdersView(BaseView):
     async def post(self):
         response = await self.request.json()
         orders_list = response['data']
-        orders_list: list[dict]
+        orders_list: List[dict]
 
         invalid_data_in_post = False
 

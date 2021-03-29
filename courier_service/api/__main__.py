@@ -7,7 +7,6 @@ from courier_service.api.app import create_app
 
 def main():
     app = create_app()
-
     run_app(app)
 
 

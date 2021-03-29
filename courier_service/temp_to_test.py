@@ -7,6 +7,7 @@ import datetime
 
 from sqlalchemy import select, update
 from courier_service.db.schema import Courier, Order, async_session, engine, Base, main
+from courier_service.api.app import create_app
 
 from courier_service.db.schema import Courier, async_session
 
@@ -40,7 +41,7 @@ def test_import_couriers():
 
 def test_patch_req():
     data = {'working_hours': ["14:00-15:30"]}
-    r = requests.patch("http://localhost:8080/couriers/3", json=data)
+    r = requests.patch("http://localhost:8080/couriers/2", json=data)
     print(r)
     print(r.status_code)
     print(r.text)
@@ -135,17 +136,36 @@ def test_order_complete():
     print(r.ok)
 
 
+def an_test():
+    data = {"data": [
+        {
+            "order_id": 3,
+            "weight": 0.01,
+            "region": 22,
+            "delivery_hours": ["09:00-12:00", "16:00-21:30"],
+            "sense_of_life": "undefined"
+        }]
+    }
+
+    r = requests.post("http://localhost:8080/orders", json=data)
+    print(r.status_code)
+
+
 if __name__ == '__main__':
-    test_import_couriers()
 
-    # test_order_complete()
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(main())
+    test_patch_req()
 
-    # reupdate_database()
-    # test_orders_assign()
+#    loop = asyncio.get_event_loop()
+#   loop.run_until_complete(hyi())
+# test_import_couriers()
 
-    # test_post_order_assign()
+# test_order_complete()
 
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(test_sess())
+
+# reupdate_database()
+# test_orders_assign()
+
+# test_post_order_assign()
+
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(test_sess())

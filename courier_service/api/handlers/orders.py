@@ -49,7 +49,7 @@ class OrdersView(BaseView):
                 return web.json_response(data=body, status=400)
             else:
                 await session.commit()
-                body = {'description': 'created',
+                body = {'description': 'Created',
                         'content': {'orders': success_ids}
                         }
                 return web.json_response(data=body, status=201)

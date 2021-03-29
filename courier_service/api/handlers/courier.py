@@ -23,24 +23,27 @@ class CourierView(BaseView):
 
             for field in fields_to_modify:
                 if field not in valid_fields:
+                    print('Fuck', field)
                     given_invalid_field = True
 
             if given_invalid_field:
                 body = {'description': 'Bad request'}
                 return web.json_response(data=body, status=400)
 
-            if not does_courier_exists(courier_id, session):
+            courier_exists = await does_courier_exists(courier_id, session)
+            if not courier_exists:
                 body = {'description': 'Not found'}
                 return web.json_response(data=body, status=404)
 
             courier_update_stm = update(Courier).where(
-                    Courier.id == courier_id).values(**fields_to_modify)
+                    Courier.id == int(courier_id)).values(**fields_to_modify)
 
             await session.execute(courier_update_stm)
 
             courier_select_stm = select(Courier.id, Courier.type, Courier.regions,
-                                        Courier.working_hours).where(
-                    Courier.id == courier_id)
+                                        Courier.working_hours,
+                                        Courier.current_taken_weight).where(
+                    Courier.id == int(courier_id))
 
             result = await session.execute(courier_select_stm)
             courier = result.first()
@@ -48,7 +51,7 @@ class CourierView(BaseView):
             await self.update_orders_due_to_courier_modification(courier, session)
 
             modified_courier = {
-                'description': 'Created',
+                'description': 'OK',
                 'content': {
                     "courier_id": courier.id,
                     "courier_type": courier.type,
@@ -70,7 +73,7 @@ class CourierView(BaseView):
         orders_select = select(Order.id, Order.region, Order.delivery_hours,
                                Order.weight).where(Order.performing_courier == courier_id)
 
-        result = session.execute(orders_select)
+        result = await session.execute(orders_select)
         orders_carried_by_courier = result.all()
 
         suitable_orders_by_time_and_region = get_appropriate_orders_by_time_and_regions(
@@ -93,7 +96,9 @@ class CourierView(BaseView):
 
             await session.execute(upd_stm)
 
-        new_taken_weight = float(courier.current_taken_weight) - released_weight
+        print(courier, 'SUKA')
+
+        new_taken_weight = courier.current_taken_weight - released_weight
         courier_update_stm = update(Courier).where(
                 Courier.id == courier_id).values(
                 current_taken_weight=new_taken_weight)
@@ -122,8 +127,7 @@ class CourierView(BaseView):
                 new_taken_weight -= float(order.weight)
 
             courier_update_stm = update(Courier).where(
-                    Courier.id == courier_id).values(
-                    current_taken_weight=new_taken_weight)
+                    Courier.id == courier_id).values(current_taken_weight=5)
 
             await session.execute(courier_update_stm)
 

@@ -4,7 +4,7 @@ from aiohttp import web
 
 from courier_service.db.schema import Courier, async_session
 from courier_service.api.handlers.base import BaseView
-from courier_service.api.handlers.utils import validate_fields
+from courier_service.api.handlers.utils import validate_fields, does_courier_exists
 
 
 class CouriersView(BaseView):
@@ -52,7 +52,7 @@ class CouriersView(BaseView):
                 return web.json_response(data=body, status=400)
             else:
                 await session.commit()
-                body = {'description': 'created',
+                body = {'description': 'Created',
                         'content': {'couriers': success_ids}
                         }
                 return web.json_response(data=body, status=201)

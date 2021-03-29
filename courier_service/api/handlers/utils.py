@@ -4,11 +4,18 @@ from courier_service.db.schema import Courier, Order
 
 def validate_fields(required_fields: tuple, data: dict):
     """it checks if given fields are correct correspond required_fields"""
+    given_fields = data.keys()
 
-    for field in required_fields:
-        given_field = data.get(field, None)
-        if given_field is None:
-            return False
+    if len(set(given_fields)) != len(given_fields):
+        return False
+
+    if len(given_fields) != len(required_fields):
+        return False
+
+    diff = set(given_fields) - set(required_fields)
+    if diff:
+        return False
+
     return True
 
 
@@ -20,7 +27,7 @@ def is_time_intersection(courier_time, order_time):
     order_start, order_end = order_time.split('-')
 
     courier_start = int(courier_start.split(':')[0]) * 60 + int(
-        courier_start.split(':')[1])
+            courier_start.split(':')[1])
     courier_end = int(courier_end.split(':')[0]) * 60 + int(courier_end.split(':')[1])
 
     order_start = int(order_start.split(':')[0]) * 60 + int(order_start.split(':')[1])
@@ -34,7 +41,7 @@ async def does_courier_exists(courier_id, session):
     """It check if courier with given courier_id exists in database"""
 
     courier_select = select(Courier.id).where(
-        Courier.id == int(courier_id))
+            Courier.id == int(courier_id))
 
     result = await session.execute(courier_select)
     courier_obj = result.first()

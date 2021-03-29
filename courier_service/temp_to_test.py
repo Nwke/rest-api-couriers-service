@@ -6,7 +6,7 @@ import json
 import datetime
 
 from sqlalchemy import select, update
-from courier_service.db.schema import Courier, Order, async_session, engine, Base, main
+from courier_service.db.schema import Courier, Order, async_session, engine, Base
 from courier_service.api.app import create_app
 
 from courier_service.db.schema import Courier, async_session
@@ -139,21 +139,21 @@ def test_order_complete():
 def an_test():
     data = {"data": [
         {
-            "order_id": 3,
+            "order_id": 5,
             "weight": 0.01,
             "region": 22,
             "delivery_hours": ["09:00-12:00", "16:00-21:30"],
-            "sense_of_life": "undefined"
+
         }]
     }
 
-    r = requests.post("http://localhost:8080/orders", json=data)
+    r = requests.post("http://0.0.0.0:80/orders", json=data)
     print(r.status_code)
 
 
 if __name__ == '__main__':
 
-    test_patch_req()
+    an_test()
 
 #    loop = asyncio.get_event_loop()
 #   loop.run_until_complete(hyi())

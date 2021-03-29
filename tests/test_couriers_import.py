@@ -23,7 +23,7 @@ async def test_valid_post_data(rebuild_db_tables):
         }]
     }
 
-    r = requests.post("http://localhost:8080/couriers", json=data)
+    r = requests.post("http://0.0.0.0:80/couriers", json=data)
     print(r.status_code)
 
     assert r.status_code == 201
@@ -42,7 +42,7 @@ async def test_invalid_post_data(rebuild_db_tables):
         }]
     }
 
-    r = requests.post("http://localhost:8080/couriers", json=data)
+    r = requests.post("http://0.0.0.0:80/couriers", json=data)
     print(r.status_code)
 
     assert r.status_code == 400
@@ -62,7 +62,7 @@ async def test_missing_field_in_post_data(rebuild_db_tables):
         }]
     }
 
-    r = requests.post("http://localhost:8080/couriers", json=data)
+    r = requests.post("http://0.0.0.0:80/couriers", json=data)
     print(r.status_code)
 
     assert r.status_code == 400
@@ -83,7 +83,7 @@ async def test_undeclared_field_in_post_data(rebuild_db_tables):
         }]
     }
 
-    r = requests.post("http://localhost:8080/couriers", json=data)
+    r = requests.post("http://0.0.0.0:80/couriers", json=data)
     print(r.status_code)
 
     assert r.status_code == 400
@@ -104,7 +104,7 @@ async def test_replaced_field_in_post_data(rebuild_db_tables):
         }]
     }
 
-    r = requests.post("http://localhost:8080/couriers", json=data)
+    r = requests.post("http://0.0.0.0:80/couriers", json=data)
     print(r.status_code)
 
     assert r.status_code == 400
@@ -120,7 +120,7 @@ async def test_empty_post_data(rebuild_db_tables):
     ]
     }
 
-    r = requests.post("http://localhost:8080/couriers", json=data)
+    r = requests.post("http://0.0.0.0:80/couriers", json=data)
     print(r.json())
 
     assert r.status_code == 201

@@ -1,7 +1,6 @@
 import asyncio
 
 from sqlalchemy import Column
-from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import Float
@@ -42,21 +41,20 @@ class Order(Base):
 
 
 engine = create_async_engine(
-    "postgresql+asyncpg://postgres:root@localhost/yandex_back_school",
-    echo=True,
+        "postgresql+asyncpg://postgres:root@localhost/yandex_backend_school",
+        echo=True,
 )
 
 async_session = sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
+        engine, class_=AsyncSession, expire_on_commit=False
 )
 
 
-async def main():
+async def create_table():
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    loop.run_until_complete(create_table())

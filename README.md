@@ -1,6 +1,7 @@
 # Couriers service
-Rest api service to manage delivery service via couriers and orders
+Rest api service to manage delivery service via couriers and orders \
 Task description can be found here: https://disk.yandex.ru/d/TbWKTZbnOST80Q?w=1 
+
 ---
 ## External dependencies description
 1. [aiohttp](https://docs.aiohttp.org/en/stable/) - Asynchronous HTTP Client/Server for asyncio 

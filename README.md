@@ -85,7 +85,7 @@ The final step is to up the server: \
 ```text 
 sudo python3 -m courier_serivce.api
 ```
-or (to make the server run as the background process
+or (to make the server run as the background process)
 ```text
 sudo nohup python app1c.py
 ```
